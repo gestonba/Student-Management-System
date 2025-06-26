@@ -8,7 +8,7 @@ const getRoleId = async (roleName) => {
 }
 
 const findAllStudents = async (payload) => {
-    const { name, className, section, roll } = payload;
+    const { name, class: className, section, roll } = payload;
     let query = `
         SELECT
             t1.id,
@@ -18,6 +18,7 @@ const findAllStudents = async (payload) => {
             t1.is_active AS "systemAccess"
         FROM users t1
         LEFT JOIN user_profiles t3 ON t1.id = t3.user_id
+        LEFT JOIN classes t2 ON t3.class_name = t2.name
         WHERE t1.role_id = 3`;
     let queryParams = [];
     if (name) {
@@ -25,7 +26,7 @@ const findAllStudents = async (payload) => {
         queryParams.push(name);
     }
     if (className) {
-        query += ` AND t3.class_name = $${queryParams.length + 1}`;
+        query += ` AND t2.id = $${queryParams.length + 1}`;
         queryParams.push(className);
     }
     if (section) {

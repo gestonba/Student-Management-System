@@ -1,19 +1,20 @@
 import * as React from 'react';
 import { Grid2 } from '@mui/material';
-import { useGetStudentDetail } from '@/domains/student/hooks/use-get-student-detail';
 import {
   MiniAvatar,
   Others,
   ParentsAndGuardianInformation,
   PersonalDetail
 } from '@/domains/student/components/views';
+import { useGetStudentDetailQuery } from '@/domains/student/api';
+import { studentFormInitialState } from '@/domains/student/reducer';
 
 type StudentProfileProps = {
   id?: string;
 };
 
 export const StudentProfile: React.FC<StudentProfileProps> = ({ id }) => {
-  const student = useGetStudentDetail(id);
+  const { data: student = { ...studentFormInitialState, id: 0, reporterName: '' } } = useGetStudentDetailQuery(id);
   const {
     name,
     email,
