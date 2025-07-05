@@ -14,6 +14,16 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(cookieParser());
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "OK",
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || "development"
+    });
+});
+
 app.use("/api/v1", v1Routes);
 
 app.use(handle404Error);
