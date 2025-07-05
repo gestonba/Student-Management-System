@@ -21,20 +21,20 @@ const findAllStudents = async (payload) => {
         WHERE t1.role_id = 3`;
     let queryParams = [];
     if (name) {
-        query += ` AND t1.name = $${queryParams.length + 1}`;
-        queryParams.push(name);
+        query += ` AND t1.name ILIKE $${queryParams.length + 1}`;
+        queryParams.push(`%${name}%`);
     }
     if (className) {
-        query += ` AND t3.class_name = $${queryParams.length + 1}`;
-        queryParams.push(className);
+        query += ` AND t3.class_name ILIKE $${queryParams.length + 1}`;
+        queryParams.push(`%${className}%`);
     }
     if (section) {
-        query += ` AND t3.section_name = $${queryParams.length + 1}`;
-        queryParams.push(section);
+        query += ` AND t3.section_name ILIKE $${queryParams.length + 1}`;
+        queryParams.push(`%${section}%`);
     }
     if (roll) {
-        query += ` AND t3.roll = $${queryParams.length + 1}`;
-        queryParams.push(roll);
+        query += ` AND t3.roll::text ILIKE $${queryParams.length + 1}`;
+        queryParams.push(`%${roll}%`);
     }
 
     query += ' ORDER BY t1.id';
