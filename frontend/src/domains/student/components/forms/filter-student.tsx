@@ -11,7 +11,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import { Search, Clear } from '@mui/icons-material';
 import { Controller, UseFormReturn } from 'react-hook-form';
 
 import { StudentFilter } from '../../types';
@@ -26,7 +26,7 @@ export const FilterStudent: React.FC<FilterStudentProps> = ({ methods, searchStu
   const { data: classResult } = useGetClassesQuery();
   const [sections, setSections] = React.useState<string[]>([]);
 
-  const { control, register } = methods;
+  const { control, register, reset } = methods;
 
   const handleClassChange = (selectedClass: number | string) => {
     const classes = classResult?.classes || [];
@@ -36,6 +36,18 @@ export const FilterStudent: React.FC<FilterStudentProps> = ({ methods, searchStu
     } else {
       setSections([]);
     }
+  };
+
+  const handleClearFilters = () => {
+    reset({
+      class: '',
+      section: '',
+      name: '',
+      roll: ''
+    });
+    setSections([]);
+    // Trigger search with empty filters
+    searchStudent();
   };
 
   return (
@@ -115,7 +127,16 @@ export const FilterStudent: React.FC<FilterStudentProps> = ({ methods, searchStu
         </Grid2>
       </Grid2>
       <Box sx={{ display: 'flex' }}>
-        <Box sx={{ marginLeft: 'auto', mt: 2 }}>
+        <Box sx={{ marginLeft: 'auto', mt: 2, display: 'flex', gap: 2 }}>
+          <Button
+            color='secondary'
+            size='small'
+            startIcon={<Clear />}
+            onClick={handleClearFilters}
+            variant='outlined'
+          >
+            Clear
+          </Button>
           <Button
             color='primary'
             size='small'
