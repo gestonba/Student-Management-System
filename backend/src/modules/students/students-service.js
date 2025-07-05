@@ -32,10 +32,11 @@ const getStudentDetail = async (id) => {
 const addNewStudent = async (payload) => {
     const ADD_STUDENT_AND_EMAIL_SEND_SUCCESS = "Student added and verification email sent successfully.";
     const ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL = "Student added, but failed to send verification email.";
+    
     try {
         const result = await addOrUpdateStudent(payload);
         if (!result.status) {
-            throw new ApiError(500, result.message);
+            throw new ApiError(500, result.message || "Failed to add student");
         }
 
         try {
@@ -45,17 +46,27 @@ const addNewStudent = async (payload) => {
             return { message: ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL }
         }
     } catch (error) {
-        throw new ApiError(500, "Unable to add student");
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Unable to add student: " + (error.message || "Unknown error"));
     }
 }
 
 const updateStudent = async (payload) => {
-    const result = await addOrUpdateStudent(payload);
-    if (!result.status) {
-        throw new ApiError(500, result.message);
-    }
+    try {
+        const result = await addOrUpdateStudent(payload);
+        if (!result.status) {
+            throw new ApiError(500, result.message || "Failed to update student");
+        }
 
-    return { message: result.message };
+        return { message: result.message };
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Unable to update student: " + (error.message || "Unknown error"));
+    }
 }
 
 const setStudentStatus = async ({ userId, reviewerId, status }) => {
@@ -69,10 +80,34 @@ const setStudentStatus = async ({ userId, reviewerId, status }) => {
     return { message: "Student status changed successfully" };
 }
 
+const deleteStudent = async (id) => {
+    await checkStudentId(id);
+    
+    try {
+        const affectedRow = await findStudentToSetStatus({ 
+            userId: id, 
+            reviewerId: null, 
+            status: false 
+        });
+        
+        if (affectedRow <= 0) {
+            throw new ApiError(500, "Unable to delete student");
+        }
+
+        return { message: "Student deleted successfully" };
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Unable to delete student: " + (error.message || "Unknown error"));
+    }
+}
+
 module.exports = {
     getAllStudents,
     getStudentDetail,
     addNewStudent,
     setStudentStatus,
     updateStudent,
+    deleteStudent,
 };

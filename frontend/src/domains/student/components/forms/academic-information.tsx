@@ -96,12 +96,18 @@ export const AcademicInformation = () => {
         </FormControl>
         <Box>
           <TextField
-            {...register('roll')}
+            {...register('roll', {
+              pattern: {
+                value: /^\d+$/,
+                message: 'Roll must be an integer'
+              }
+            })}
             error={Boolean(errors.roll)}
             helperText={errors.roll?.message}
             label='Roll'
             size='small'
-            slotProps={{ inputLabel: { shrink: true } }}
+            type='number'
+            // slotProps={{ inputProps: { step: 1, min: 0 }, inputLabel: { shrink: true } }}
           />
         </Box>
         <Box>
