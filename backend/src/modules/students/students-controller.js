@@ -6,7 +6,7 @@ const handleGetAllStudents = asyncHandler(async (req, res) => {
     const payload = { name, className, section, roll };
     
     const students = await getAllStudents(payload);
-    res.json(students);
+    res.json({ students });
 });
 
 const handleAddStudent = asyncHandler(async (req, res) => {
