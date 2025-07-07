@@ -33,7 +33,7 @@ const processGetDepartmentById = async (id) => {
 
   return department;
 };
-const errorCheck = require("./department-error");
+
 const processUpdateDepartmentById = async (payload) => {
   const affectedRow = await updateDepartmentById(payload);
   if (affectedRow <= 0) {
